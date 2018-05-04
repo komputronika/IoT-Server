@@ -1,0 +1,16 @@
+r
+*.pyc
+*.unsaved
+*.tmp
+*.thumb
+*.rtpl.php
+*.b#?
+*.s#?
+*.l#?
+~$*.*
+~*.*~
+.sass-cache
+/build
+/build/
+/dist
+/dist/
