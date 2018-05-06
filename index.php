@@ -83,7 +83,10 @@ function baca($key) {
     } else {
         $limit = 60;
     }
-    $q = mysql_query("select * from $table where `key` = '$key' limit 0,$limit");
+    $q = mysql_query("select * from $table
+                      where `key` = '$key'
+                      order by created_at desc
+                      limit 0,$limit");
 
     // Susun text nya
     $res = "";
@@ -91,7 +94,7 @@ function baca($key) {
         $jsondata = array();
     }
 
-    if ($limit == 1) {
+    if ($limit == 1 and strpos($format, 'json') !== false) {
 
         $d = mysql_fetch_object($q);
         $jsondata["created_at"] = $d->created_at;
@@ -113,10 +116,10 @@ function baca($key) {
 
             // Baca setiap field dalam JSON, ke dalam array
             if (strpos($format, 'json') !== false) {
-
                 $temp = array();
                 $temp["created_at"] = $d->created_at;
             }
+
             $line = array();
             foreach($json as $k => $v){
                 $line[] = "$k:$v";
