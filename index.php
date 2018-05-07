@@ -18,6 +18,9 @@ Untuk membaca JSON  = http://server.com/baca/lokasiku/json
 Author: Komputronika.com
 */
 
+// Include file konfigurasi database
+require_once("config.php");
+
 // Panggil fungsi untuk mendapatkan URL
 $base_url = parsingURL();
 
@@ -39,14 +42,11 @@ $key      = trim(strtolower($routes[2]));
 // Set $format sebagai bagian ketiga dari URL
 $format   = strtolower(trim(strtolower($routes[3])));
 
-// Baca file konfigurasi
-$config = parse_ini_file(".config");
-
 // Sesuaikan variable dengan config
-$host = $config["hostname"];
-$user = $config["username"];
-$pass = $config["password"];
-$db   = $config["database"];
+$host = $CONFIG["hostname"];
+$user = $CONFIG["username"];
+$pass = $CONFIG["password"];
+$db   = $CONFIG["database"];
 $table= "data";
 
 // Konek ke database MySQL
