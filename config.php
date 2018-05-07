@@ -1,7 +1,7 @@
 <?php
 // Sesuaikan dengan setting database anda
-$CONFIG["hostname"] = "";
-$CONFIG["username"] = "";
+$CONFIG["hostname"] = "127.0.0.1";
+$CONFIG["username"] = "root";
 $CONFIG["password"] = "";
-$CONFIG["database"] = "";
+$CONFIG["database"] = "test";
 ?>

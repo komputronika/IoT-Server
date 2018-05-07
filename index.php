@@ -18,6 +18,11 @@ Untuk membaca JSON  = http://server.com/baca/lokasiku/json
 Author: Komputronika.com
 */
 
+// Konfigurasi dasar
+date_default_timezone_set('Asia/Jakarta');
+set_time_limit(60*10);
+error_reporting(0&~E_WARNING&~E_STRICT&~E_NOTICE);
+
 // Include file konfigurasi database
 require_once("config.php");
 
@@ -86,7 +91,10 @@ function baca($key) {
     } else {
         $limit = 60;
     }
-    $q = mysql_query("select * from $table
+
+    // Query ke database MySQL
+    $q = mysql_query("select CONVERT_TZ(created_at, @@session.time_zone, '+07:00') as created, content
+                      from $table
                       where `key` = '$key'
                       order by created_at desc
                       limit 0,$limit");
@@ -100,7 +108,7 @@ function baca($key) {
     if ($limit == 1 and strpos($format, 'json') !== false) {
 
         $d = mysql_fetch_object($q);
-        $jsondata["created_at"] = $d->created_at;
+        $jsondata["created_at"] = $d->created;
         $json = json_decode($d->content);
 
         foreach($json as $k => $v){
@@ -112,7 +120,7 @@ function baca($key) {
         while ($d = mysql_fetch_object($q)) {
 
             // Di awali dengan 'tanggal/'
-            $res .= $d->created_at."/";
+            $res .= $d->created."/";
 
             // JSON yang tersimpan di table, dikonver jadi array
             $json = json_decode($d->content);
@@ -120,7 +128,7 @@ function baca($key) {
             // Baca setiap field dalam JSON, ke dalam array
             if (strpos($format, 'json') !== false) {
                 $temp = array();
-                $temp["created_at"] = $d->created_at;
+                $temp["created_at"] = $d->created;
             }
 
             $line = array();
