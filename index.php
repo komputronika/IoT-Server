@@ -39,12 +39,15 @@ $key      = trim(strtolower($routes[2]));
 // Set $format sebagai bagian ketiga dari URL
 $format   = strtolower(trim(strtolower($routes[3])));
 
-// Set parameter untuk MySQL, sesuaikan!
-$host = "localhost";
-$user = ""; // Silahkan isi
-$pass = ""; // Silahkan isi
-$db   = ""; // Silahkan isi
-$table= ""; // Silahkan isi
+// Baca file konfigurasi
+$config = parse_ini_file(".config");
+
+// Sesuaikan variable dengan config
+$host = $config["hostname"];
+$user = $config["username"];
+$pass = $config["password"];
+$db   = $config["database"];
+$table= "data";
 
 // Konek ke database MySQL
 // Struktur database bisa diimpor dari file iotserver.sql
