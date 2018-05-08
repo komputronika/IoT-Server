@@ -48,17 +48,16 @@ $key      = trim(strtolower($routes[2]));
 $format   = strtolower(trim(strtolower($routes[3])));
 
 // Sesuaikan variable dengan config
-$host = $CONFIG["hostname"];
-$user = $CONFIG["username"];
-$pass = $CONFIG["password"];
-$db   = $CONFIG["database"];
-$table= "data";
+$host  = $CONFIG["hostname"];
+$user  = $CONFIG["username"];
+$pass  = $CONFIG["password"];
+$db    = $CONFIG["database"];
+$table = "data";
 
 // Konek ke database MySQL
 // Struktur database bisa diimpor dari file iotserver.sql
 
-mysql_connect( $host, $user, $pass );
-mysql_select_db( $db );
+$mysql = mysqli_connect( $host, $user, $pass, $db );
 
 // Periksa aoakah isi dari variabel $function
 switch ($function) {
@@ -83,7 +82,7 @@ switch ($function) {
 //----------------------------
 function baca($key) {
     // Variabel $table diambil dari var global
-    global $table, $format;
+    global $table, $format, $mysql;
 
     // Baca dari MySQL semua data data $key
     if ( strpos($format, 'single') !== false )  {
@@ -93,7 +92,7 @@ function baca($key) {
     }
 
     // Query ke database MySQL
-    $q = mysql_query("select CONVERT_TZ(created_at, @@session.time_zone, '+07:00') as created, content
+    $q = mysqli_query($mysql, "select CONVERT_TZ(created_at, @@session.time_zone, '+07:00') as created, content
                       from $table
                       where `key` = '$key'
                       order by created_at desc
@@ -107,7 +106,7 @@ function baca($key) {
 
     if ($limit == 1 and strpos($format, 'json') !== false) {
 
-        $d = mysql_fetch_object($q);
+        $d = mysqli_fetch_object($q);
         $jsondata["created_at"] = $d->created;
         $json = json_decode($d->content);
 
@@ -117,7 +116,7 @@ function baca($key) {
 
     } else {
 
-        while ($d = mysql_fetch_object($q)) {
+        while ($d = mysqli_fetch_object($q)) {
 
             // Di awali dengan 'tanggal/'
             $res .= $d->created."/";
@@ -168,17 +167,17 @@ function baca($key) {
 //----------------------------
 function simpan($key) {
     // Variabel $table diambil dari var global
-    global $table;
+    global $table, $mysql;
 
     // Konversi dulu semua variable yang terbaca di URL
     // Menjadi kode JSON, untuk disimpan dalam tabel
     $content = json_encode($_GET);
 
     // Simpan ke mysql
-    mysql_query("insert into $table(`key`,content) values('$key','$content')");
+    mysqli_query($mysql, "insert into $table(`key`,content) values('$key','$content')");
 
     // Cek apakah ada error dalam insert ke database
-    $success = empty(mysql_error());
+    $success = empty(mysqli_error($mysql));
 
     // Response 'Error' atau 'Ok'
     header('Content-Type:text/plain');
